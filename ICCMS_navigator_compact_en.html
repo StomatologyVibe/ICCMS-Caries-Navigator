@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICCMS Caries Clinical Navigator - Compact Horizontal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        high: '#ef4444',
+                        moderate: '#f59e0b',
+                        low: '#22c55e'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .result-high { background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border: 2px solid #ef4444; }
+        .result-moderate { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 2px solid #f59e0b; }
+        .result-low { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 2px solid #22c55e; }
+        .prescription-high { border-left: 4px solid #ef4444; }
+        .prescription-moderate { border-left: 4px solid #f59e0b; }
+        .prescription-low { border-left: 4px solid #22c55e; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-3">
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-3">
+            <div class="flex items-center justify-center gap-2">
+                <div class="bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-medium">ICCMS</div>
+                <h1 class="text-lg font-bold text-gray-800">Caries Clinical Navigator</h1>
+            </div>
+            <div class="flex justify-center gap-2 mt-2">
+                <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full text-xs font-medium">Step 1: Determine</span>
+                <span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full text-xs font-medium">Step 2: Detect</span>
+                <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium">Step 3: Decide</span>
+                <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-medium">Step 4: Do</span>
+            </div>
+        </header>
+
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-3">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs font-bold">STEP 1</span>
+                <h2 class="text-sm font-semibold text-gray-800">Patient Risk Assessment</h2>
+                <div id="patient-risk-banner" class="ml-auto px-3 py-1 rounded-lg text-center result-low">
+                    <div class="flex items-center gap-3">
+                        <div>
+                            <div id="patient-risk-level" class="text-base font-bold text-gray-800">Low Risk</div>
+                            <div id="patient-risk-message" class="text-xs text-gray-600">Doing well</div>
+                        </div>
+                        <div id="patient-risk-reason" class="text-xs text-gray-500"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+                <div class="bg-red-50 rounded-lg p-3 border border-red-200">
+                    <h3 class="text-xs font-bold text-red-600 mb-2 flex items-center gap-1">🚩 High-Risk Determinants <span class="text-red-400 text-[10px]">(Any one = High Risk)</span></h3>
+                    <div class="space-y-1">
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-red-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-red-600 rounded high-risk-factor" value="radiation">
+                            <div>
+                                <span class="text-xs text-gray-700">Head & Neck Radiation</span>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-red-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-red-600 rounded high-risk-factor" value="hyposalivation">
+                            <div>
+                                <span class="text-xs text-gray-700">Hyposalivation / Dry Mouth</span>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-red-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-red-600 rounded high-risk-factor" value="active_caries">
+                            <div>
+                                <span class="text-xs text-gray-700">Active Caries / Recent Caries Experience</span>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-red-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-red-600 rounded high-risk-factor" value="prs_pufa">
+                            <div>
+                                <span class="text-xs text-gray-700">PRS / PUFA (Pulpal Involvement)</span>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-red-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-red-600 rounded high-risk-factor" value="caregiver_caries">
+                            <div>
+                                <span class="text-xs text-gray-700">Caregiver with Active Caries</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bg-orange-50 rounded-lg p-3 border border-orange-200">
+                    <h3 class="text-xs font-bold text-orange-600 mb-2">⚠️ Other Risk Factors</h3>
+                    <div class="grid grid-cols-2 gap-1">
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="high_sugar">
+                            <span class="text-xs text-gray-700">High free sugar intake</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="poor_oral_hygiene">
+                            <span class="text-xs text-gray-700">Poor oral hygiene</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="low_fluoride">
+                            <span class="text-xs text-gray-700">Insufficient topical fluoride</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="low_socioeconomic">
+                            <span class="text-xs text-gray-700">Low socioeconomic / health literacy</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="low_compliance">
+                            <span class="text-xs text-gray-700">Low compliance / motivation</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="special_needs">
+                            <span class="text-xs text-gray-700">Special health needs / disability</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="symptomatic_attendance">
+                            <span class="text-xs text-gray-700">Symptom-driven visits only</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="poor_plaque">
+                            <span class="text-xs text-gray-700">Heavy plaque / poor plaque control</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="plaque_stagnation">
+                            <span class="text-xs text-gray-700">Plaque stagnation areas</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="low_salivary_flow">
+                            <span class="text-xs text-gray-700">Low salivary flow rate</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="erupting_molar">
+                            <span class="text-xs text-gray-700">Erupting molars (children)</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="root_surface">
+                            <span class="text-xs text-gray-700">Exposed root surfaces (elderly)</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="reduced_ability_oh">
+                            <span class="text-xs text-gray-700">Reduced ability for oral hygiene</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="bottle_sugar">
+                            <span class="text-xs text-gray-700">Night-time sugar bottle / sippy cup</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-orange-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-orange-600 rounded risk-factor" value="low_ftoothpaste_child">
+                            <span class="text-xs text-gray-700">Not using ≥1000ppm F toothpaste daily</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bg-green-50 rounded-lg p-3 border border-green-200">
+                    <h3 class="text-xs font-bold text-green-600 mb-2">🛡️ Protective Factors</h3>
+                    <div class="space-y-1">
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-green-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-green-600 rounded protective-factor" value="fluoride_toothpaste">
+                            <span class="text-xs text-gray-700">≥1000ppm F toothpaste ×2/day</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-green-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-green-600 rounded protective-factor" value="dental_care">
+                            <span class="text-xs text-gray-700">Regular prevention-oriented dental care</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer hover:bg-green-100 p-1 rounded transition-colors">
+                            <input type="checkbox" class="w-3 h-3 text-green-600 rounded protective-factor" value="systemic_fluoride">
+                            <span class="text-xs text-gray-700">Fluoridated water / community fluoride</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white rounded-xl shadow-sm p-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-xs font-bold">STEP 2</span>
+                    <h2 class="text-sm font-semibold text-gray-800">Tooth Lesion Assessment</h2>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Lesion Severity</label>
+                        <select id="lesion-severity" class="w-full p-2 border border-gray-300 rounded-lg text-xs bg-white">
+                            <option value="sound">Sound (No Lesion)</option>
+                            <option value="initial">Initial (ICDAS 1-2)</option>
+                            <option value="moderate">Moderate (ICDAS 3-4)</option>
+                            <option value="extensive">Extensive (ICDAS 5-6)</option>
+                        </select>
+                    </div>
+                    <div id="activity-container">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Lesion Activity</label>
+                        <select id="lesion-activity" class="w-full p-2 border border-gray-300 rounded-lg text-xs bg-white">
+                            <option value="inactive">Inactive</option>
+                            <option value="active">Active</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-3 p-2 bg-gray-50 rounded-lg text-xs text-gray-600">
+                    <span class="text-blue-500">💡</span> Active lesion signs: Chalky/yellow, dull, plaque-covered, rough on probing
+                </div>
+            </div>
+
+            <div id="prescription-card" class="bg-white rounded-xl shadow-sm p-4 prescription-low">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs font-bold">STEP 3+4</span>
+                    <h2 class="text-sm font-semibold text-gray-800">Clinical Decision</h2>
+                </div>
+                <div class="flex gap-2 mb-3">
+                    <div class="flex items-center gap-1">
+                        <span class="text-xs text-gray-600">Progression:</span>
+                        <span id="likelihood-badge" class="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded text-xs font-bold">Moderate</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="text-xs text-gray-600">Intervention:</span>
+                        <span id="intervention-badge" class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs font-bold">Non-Operative Care</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-gray-50 rounded-lg p-2">
+                        <div class="flex items-center gap-1 mb-1">
+                            <span class="text-green-600">🏠</span>
+                            <span class="text-xs font-semibold text-gray-700">Patient Management</span>
+                        </div>
+                        <div id="patient-management" class="text-xs text-gray-700 space-y-1"></div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-2">
+                        <div class="flex items-center gap-1 mb-1">
+                            <span class="text-blue-600">🦷</span>
+                            <span class="text-xs font-semibold text-gray-700">Tooth Management</span>
+                        </div>
+                        <div id="tooth-management" class="text-xs text-gray-700 space-y-1"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const highRiskFactors = document.querySelectorAll('.high-risk-factor');
+        const riskFactors = document.querySelectorAll('.risk-factor');
+        const protectiveFactors = document.querySelectorAll('.protective-factor');
+        const lesionSeverity = document.getElementById('lesion-severity');
+        const lesionActivity = document.getElementById('lesion-activity');
+        const activityContainer = document.getElementById('activity-container');
+        const patientRiskBanner = document.getElementById('patient-risk-banner');
+        const patientRiskLevel = document.getElementById('patient-risk-level');
+        const patientRiskMessage = document.getElementById('patient-risk-message');
+        const patientRiskReason = document.getElementById('patient-risk-reason');
+        const likelihoodBadge = document.getElementById('likelihood-badge');
+        const interventionBadge = document.getElementById('intervention-badge');
+        const patientManagement = document.getElementById('patient-management');
+        const toothManagement = document.getElementById('tooth-management');
+        const prescriptionCard = document.getElementById('prescription-card');
+
+        const decisionMatrix = {
+            'Low-Sound': { likelihood: 'Low', intervention: 'Risk-based Prevention', interventionCN: 'Risk-based Prevention' },
+            'Low-Initial Inactive': { likelihood: 'Low', intervention: 'Risk-based Prevention', interventionCN: 'Risk-based Prevention / Monitoring' },
+            'Low-Moderate Inactive': { likelihood: 'Low', intervention: 'Non-Operative Care / TPOC', interventionCN: 'NOC or TPOC' },
+            'Low-Extensive Inactive': { likelihood: 'Low', intervention: 'Non-Operative Care / TPOC', interventionCN: 'NOC or TPOC' },
+            'Low-Initial Active': { likelihood: 'Moderate', intervention: 'Non-Operative Care', interventionCN: 'Non-Operative Care (Fluoride/Sealant)' },
+            'Low-Moderate Active': { likelihood: 'Moderate', intervention: 'NOC or TPOC', interventionCN: 'NOC if non-cavitated, TPOC if cavitated' },
+            'Low-Extensive Active': { likelihood: 'Moderate', intervention: 'Tooth-Preserving Operative Care', interventionCN: 'Tooth-Preserving Operative Care' },
+            'Moderate-Sound': { likelihood: 'Moderate', intervention: 'Risk-based Prevention', interventionCN: 'Risk-based Prevention' },
+            'Moderate-Initial Inactive': { likelihood: 'Moderate', intervention: 'Risk-based Prevention', interventionCN: 'Risk-based Prevention' },
+            'Moderate-Moderate Inactive': { likelihood: 'Moderate', intervention: 'NOC (Primary)', interventionCN: 'NOC (Primary)' },
+            'Moderate-Extensive Inactive': { likelihood: 'Moderate', intervention: 'NOC (Primary)', interventionCN: 'NOC (Primary)' },
+            'Moderate-Initial Active': { likelihood: 'Moderate', intervention: 'Non-Operative Care', interventionCN: 'Non-Operative Care' },
+            'Moderate-Moderate Active': { likelihood: 'High', intervention: 'Tooth-Preserving Operative Care', interventionCN: 'Mostly TPOC' },
+            'Moderate-Extensive Active': { likelihood: 'High', intervention: 'Tooth-Preserving Operative Care', interventionCN: 'Tooth-Preserving Operative Care' },
+            'High-Sound': { likelihood: 'High', intervention: 'Intensive Prevention', interventionCN: 'Intensive Prevention (High-frequency fluoride)' },
+            'High-Initial Inactive': { likelihood: 'High', intervention: 'Intensive Prevention', interventionCN: 'Intensive Prevention' },
+            'High-Moderate Inactive': { likelihood: 'High', intervention: 'NOC (Higher TPOC probability)', interventionCN: 'NOC, but higher TPOC probability' },
+            'High-Extensive Inactive': { likelihood: 'High', intervention: 'NOC (Primary)', interventionCN: 'NOC (Primary)' },
+            'High-Initial Active': { likelihood: 'High', intervention: 'Non-Operative Care', interventionCN: 'Non-Operative Care' },
+            'High-Moderate Active': { likelihood: 'High', intervention: 'Tooth-Preserving Operative Care', interventionCN: 'TPOC preferred, few NOC' },
+            'High-Extensive Active': { likelihood: 'High', intervention: 'Tooth-Preserving Operative Care', interventionCN: 'Tooth-Preserving Operative Care' }
+        };
+
+        const patientManagementData = {
+            'Low': { home: '≥1000ppm F toothpaste ×2/day', clinical: 'Regular dental visits (adults 6-24mo)', recall: '6-24 months' },
+            'Moderate': { home: 'F toothpaste + prescription fluoride rinse', clinical: '2×/yr professional topical fluoride + sealant', recall: 'Shortened recall' },
+            'High': { home: '≥1450ppm high-F toothpaste', clinical: 'F 2-4×/yr, 3-month professional cleaning', recall: '3-6 months' }
+        };
+
+        const toothManagementData = {
+            'Initial Active': { core: 'Non-Operative Care (NOC)', measures: ['F toothpaste mechanical cleaning', 'Clinical topical fluoride', 'Pit & fissure sealant', 'Resin infiltration'] },
+            'Initial Inactive': { core: 'Monitoring', measures: ['Risk prevention', 'Regular clinical monitoring'] },
+            'Moderate Active': { core: 'Decide based on cavitation', measures: ['Non-cavitated: sealant/infiltration', 'Cavitated: TPOC', 'Primary teeth: Hall technique'] },
+            'Moderate Inactive': { core: 'NOC (Primary)', measures: ['Monitoring', 'Plaque control'] },
+            'Extensive Active': { core: 'Tooth-Preserving Operative Care (TPOC)', measures: ['Stepwise caries removal', 'Selective caries removal', 'Children: Preformed crown/Hall'] },
+            'Extensive Inactive': { core: 'NOC or TPOC', measures: ['NOC if stable', 'TPOC if needed for aesthetics'] },
+            'Sound': { core: 'No lesion-specific treatment', measures: ['Maintain oral hygiene', 'Risk prevention'] }
+        };
+
+        function getLikelihoodClass(l) {
+            if (l === 'High') return 'bg-red-100 text-red-800';
+            if (l === 'Moderate') return 'bg-yellow-100 text-yellow-800';
+            return 'bg-green-100 text-green-800';
+        }
+
+        function getInterventionClass(i) {
+            if (i.includes('Operative') || i.includes('TPOC')) return 'bg-orange-100 text-orange-800';
+            return 'bg-blue-100 text-blue-800';
+        }
+
+        function calculatePatientRisk() {
+            const highCount = Array.from(highRiskFactors).filter(f => f.checked).length;
+            const riskCount = Array.from(riskFactors).filter(f => f.checked).length;
+            const protCount = Array.from(protectiveFactors).filter(f => f.checked).length;
+
+            let level, label, message, reason, bannerClass;
+            if (highCount > 0 || protCount === 0) {
+                level = 'High'; label = 'High Risk'; message = 'Close monitoring required';
+                reason = highCount > 0 ? `High-risk: ${highCount} factors` : 'No protective factors';
+                bannerClass = 'result-high';
+            } else if (protCount === 3 && riskCount === 0) {
+                level = 'Low'; label = 'Low Risk'; message = 'Doing well';
+                reason = 'All protective factors present'; bannerClass = 'result-low';
+            } else {
+                const diff = protCount - riskCount;
+                if (diff >= 1 && riskCount <= 2) { level = 'Low'; label = 'Low Risk'; message = 'Doing well'; reason = `Protective (${protCount}) sufficient`; bannerClass = 'result-low'; }
+                else if (diff <= -2 || riskCount >= 5) { level = 'High'; label = 'High Risk'; message = 'Enhanced intervention needed'; reason = `Risk factors (${riskCount}) excessive`; bannerClass = 'result-high'; }
+                else { level = 'Moderate'; label = 'Moderate Risk'; message = 'Enhance prevention'; reason = `Protective (${protCount}) vs risk (${riskCount})`; bannerClass = 'result-moderate'; }
+            }
+            patientRiskBanner.className = `ml-auto px-3 py-1 rounded-lg text-center ${bannerClass}`;
+            patientRiskLevel.textContent = label;
+            patientRiskMessage.textContent = message;
+            patientRiskReason.textContent = reason;
+            return level;
+        }
+
+        function updatePrescription() {
+            const patientRisk = calculatePatientRisk();
+            const severity = lesionSeverity.value;
+            const activity = lesionActivity.value;
+            activityContainer.classList.toggle('opacity-50', severity === 'sound');
+            activityContainer.querySelector('select').disabled = severity === 'sound';
+
+            const severityCN = { sound: 'Sound', initial: 'Initial', moderate: 'Moderate', extensive: 'Extensive' }[severity];
+            const activityCN = { inactive: 'Inactive', active: 'Active' }[activity];
+            const matrixKey = `${patientRisk}-${severity === 'sound' ? 'Sound' : severityCN + ' ' + activityCN}`;
+            const decision = decisionMatrix[matrixKey] || decisionMatrix[`${patientRisk}-Sound`];
+
+            likelihoodBadge.textContent = decision.likelihood;
+            likelihoodBadge.className = `px-2 py-0.5 rounded text-xs font-bold ${getLikelihoodClass(decision.likelihood)}`;
+            interventionBadge.textContent = decision.intervention;
+            interventionBadge.className = `px-2 py-0.5 rounded text-xs font-bold ${getInterventionClass(decision.intervention)}`;
+
+            const pm = patientManagementData[patientRisk];
+            patientManagement.innerHTML = `<div>🏠 ${pm.home}</div><div>🏥 ${pm.clinical}</div><div>📅 ${pm.recall}</div>`;
+
+            let toothKey = severity === 'sound' ? 'Sound' : `${severity.charAt(0).toUpperCase() + severity.slice(1)} ${activity.charAt(0).toUpperCase() + activity.slice(1)}`;
+            const tm = toothManagementData[toothKey] || toothManagementData['Sound'];
+            toothManagement.innerHTML = `<div class="font-semibold text-blue-700">${tm.core}</div>${tm.measures.map(m => `<div>• ${m}</div>`).join('')}`;
+
+            const prescriptionClass = patientRisk === 'High' ? 'prescription-high' : patientRisk === 'Moderate' ? 'prescription-moderate' : 'prescription-low';
+            prescriptionCard.className = `bg-white rounded-xl shadow-sm p-4 ${prescriptionClass}`;
+        }
+
+        lesionSeverity.addEventListener('change', updatePrescription);
+        lesionActivity.addEventListener('change', updatePrescription);
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.addEventListener('change', updatePrescription));
+        updatePrescription();
+    </script>
+</body>
+</html>
